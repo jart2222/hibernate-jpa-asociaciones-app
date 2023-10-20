@@ -20,7 +20,13 @@ public class HibernateAsociacionesOneToManyFind {
             cliente.getDirecciones().add(d2);
             em.merge(cliente); /* es update no insert por eso merge no persist*/
             em.getTransaction().commit();
-            System.out.println(cliente  );
+            System.out.println(cliente);
+
+            em.getTransaction().begin();
+            d1=em.find(Direccion.class, 1L);
+            cliente.getDirecciones().remove(d1);
+            em.getTransaction().commit();
+            System.out.println(cliente);
         }catch (Exception e){
             em.getTransaction().rollback();
             e.printStackTrace();

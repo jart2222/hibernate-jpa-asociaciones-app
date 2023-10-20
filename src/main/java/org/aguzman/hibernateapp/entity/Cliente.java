@@ -18,7 +18,7 @@ public class Cliente {
     @Column(name = "forma_pago")
     private String formaPago;
 
-    @OneToMany(cascade =CascadeType.ALL , orphanRemoval = true)
+    @OneToMany(cascade =CascadeType.ALL , orphanRemoval = true)//borra operaciones huerfanas
     //@JoinColumn(name = "id_cliente")
     @JoinTable(name = "tbl_clientes_direcciones", joinColumns = @JoinColumn(name = "id_cliente")
     ,inverseJoinColumns = @JoinColumn(name = "id_direccion"),
