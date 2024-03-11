@@ -21,14 +21,22 @@ public class Cliente {
     @OneToMany(cascade =CascadeType.ALL , orphanRemoval = true)//borra operaciones huerfanas
     //@JoinColumn(name = "id_cliente")
     @JoinTable(name = "tbl_clientes_direcciones", joinColumns = @JoinColumn(name = "id_cliente")
-    ,inverseJoinColumns = @JoinColumn(name = "id_direccion"),
+    ,inverseJoinColumns = @JoinColumn(name = "id_direccion"), //para este ejercicio el cliente puede tener varias direcciones pero no V.V
     uniqueConstraints = @UniqueConstraint(columnNames = "id_direccion"))
 
     private List<Direccion> direcciones;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "cliente") //se hace referencia al atributo cliente de la clase factura
+    private List<Factura> facturas;
+
     @Embedded
     private Auditoria audit=new Auditoria();
 
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "cliente")
+    private ClienteDetalle detalle;
+
     public Cliente() {
+        facturas=new ArrayList<>();
         direcciones=new ArrayList<>();
     }
 
@@ -86,6 +94,51 @@ public class Cliente {
         this.direcciones = direcciones;
     }
 
+    public List<Factura> getFacturas() {
+        return facturas;
+    }
+
+    public void setFacturas(List<Factura> facturas) {
+        this.facturas = facturas;
+    }
+
+    public Cliente addFactura(Factura factura){
+        this.facturas.add(factura);
+        factura.setCliente(this);
+        return this;
+    }
+
+    public void removeFactura(Factura factura){
+        this.facturas.remove(factura);
+        factura.setCliente(null);
+    }
+
+    public Auditoria getAudit() {
+        return audit;
+    }
+
+    public void setAudit(Auditoria audit) {
+        this.audit = audit;
+    }
+
+    public ClienteDetalle getDetalle() {
+        return detalle;
+    }
+
+    public void setDetalle(ClienteDetalle detalle) {
+        this.detalle = detalle;
+    }
+
+    public void addDetalle(ClienteDetalle detalle) {
+        this.detalle = detalle;
+        detalle.setCliente(this);
+    }
+
+    public void removeDetalle() {
+        detalle.setCliente(null);
+        this.detalle = null;
+    }
+
     @Override
     public String toString() {
         LocalDateTime creado=this.audit!=null?audit.getCreadoEn():null;
@@ -97,8 +150,10 @@ public class Cliente {
                 ", apellido='" + apellido + '\'' +
                 ", formaPago='" + formaPago + '\'' +
                 ", creadoEn='" + creado + '\'' +
-                ", editadoEn='" + editado + '\''
-                +", direcciones='" + direcciones + '\''+
+                ", editadoEn='" + editado + '\'' +
+                ", direcciones='" + direcciones + '\''+
+                ", facturas='" + facturas + '\''+
+                ", detalle='" + detalle + '\''+
                 '}'
                 ;
     }

@@ -3,28 +3,30 @@ package org.aguzman.hibernateapp;
 import jakarta.persistence.EntityManager;
 import org.aguzman.hibernateapp.entity.Cliente;
 import org.aguzman.hibernateapp.entity.Direccion;
+import org.aguzman.hibernateapp.entity.Factura;
 import org.aguzman.hibernateapp.util.JpaUtil;
 
-public class HibernateAsociacionesOneToMany {
+public class HibernateAsociacionesOneToManyBidireccional {
     public static void main(String[] args) {
         EntityManager em= JpaUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-            Cliente cliente =new Cliente("Cata", "Edu");
-            cliente.setFormaPago("mercado pago");
+            Cliente cliente= new Cliente("Cata", "Edu");
+            cliente.setFormaPago("paypal");
 
-            Direccion d1= new Direccion("el vengel", 123);
-            Direccion d2= new Direccion("vascos de gama", 456);
+            Factura f1= new Factura("compra de supermecado", 5000L);
+            Factura f2= new Factura("compra de tecnologia", 7000L);
+            cliente.addFactura(f1)
+                    .addFactura(f2);
 
-            cliente.getDirecciones().add(d1);
-            cliente.getDirecciones().add(d2);
             em.persist(cliente);
             em.getTransaction().commit();
-            System.out.println(cliente);
 
             em.getTransaction().begin();
-            cliente=em.find(Cliente.class,cliente.getId());
-            cliente.getDirecciones().remove(d1);
+            //Factura f3= em.find(Factura.class, 1L);
+            Factura f3=new Factura("compra de supermecado", 5000L);
+            f3.setId(1L);// se necesita agregar metodo equals para que se pueda eliminar
+            cliente.removeFactura(f3);
             em.getTransaction().commit();
             System.out.println(cliente);
         }catch (Exception e){
